@@ -23,7 +23,7 @@ jobs:
       - name: 3. Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.5
+          gradle-version: 9.4.1
 
       - name: 4. Build APK and Bundle (AAB)
         # This will create both the installable APK and the Play Store AAB
