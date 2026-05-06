@@ -1,0 +1,6 @@
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/ui/theme/Theme.kt
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/ui/theme/Type.kt
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/ui/theme/Color.kt
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/Config.kt
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/Admob.kt
+/home/rashid/AndroidStudioProjects/TrustriumMining/app/src/main/java/com/example/trustriummining/MainActivity.kt
