@@ -1,6 +1,9 @@
+ // Root build.gradle.kts
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.compose) apply false 
+    // Do NOT add kotlin.android here if you use kotlin.compose in the app file
+}
 }
 
 android {
