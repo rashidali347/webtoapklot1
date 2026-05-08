@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,8 +16,10 @@
         android:theme="@style/Theme.TrustriumMining"
         android:usesCleartextTraffic="true">
 
-        <!-- AdMob App ID - Replace with your own AdMob App ID -->
-         <!-- Placeholder for testing -->
+        <!-- AdMob App ID: This is a sample ID for testing. 
+             Replace it with your real ID from Google Play Console later. -->
+        <meta-data
+           
 
         <activity
             android:name=".MainActivity"
@@ -25,7 +28,6 @@
             android:theme="@style/Theme.TrustriumMining" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
