@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.trustriummining"
-        minSdk = 24 // Lowered slightly to support more Android devices
+        minSdk = 28 // Lowered slightly to support more Android devices
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
