@@ -1,8 +1,6 @@
- // Root build.gradle.kts
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose) 
-    // Do NOT add kotlin.android here if you use kotlin.compose in the app file
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -46,7 +44,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(androidx.appcompat:appcompat:1.7.0)
+    implementation("androidx.appcompat:appcompat:1.7.0")
     
     // Added dependencies
     implementation(libs.androidx.swiperefreshlayout)
