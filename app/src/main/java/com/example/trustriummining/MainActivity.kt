@@ -11,81 +11,94 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.MobileAds // یہ امپورٹ چیک کر لیں
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var webView: WebView
-    private lateinit var swipeRefresh: SwipeRefreshLayout
-    private lateinit var progressBar: ProgressBar
+    private lateinit var webView: WebView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var progressBar: ProgressBar
 
-    // Update your website link here
-    private val websiteUrl = "https://app.trustrium.com" 
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // 1. سب سے پہلے ایڈز کو انیشلائز کریں تاکہ کریش نہ ہو
+        MobileAds.initialize(this) {}
 
-    @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        
-        // 1. Initialize Ads
-        MobileAds.initialize(this) {}
+        val root = FrameLayout(this)
+        setContentView(root)
+        
+        swipeRefresh = SwipeRefreshLayout(this)
+        webView = WebView(this)
+        progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal)
+        progressBar.max = 100
+        
+        val adContainer = FrameLayout(this)
+        adContainer.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply { gravity = android.view.Gravity.BOTTOM }
 
-        // 2. Setup Programmatic UI
-        val root = FrameLayout(this)
-        setContentView(root)
-        
-        swipeRefresh = SwipeRefreshLayout(this)
-        webView = WebView(this)
-        
-        // Horizontal Progress Bar at the top
-        progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal)
-        progressBar.max = 100
-        
-        // Add components to the screen
-        root.addView(swipeRefresh)
-        swipeRefresh.addView(webView)
-        root.addView(progressBar, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 15))
+        root.addView(swipeRefresh)
+        swipeRefresh.addView(webView)
+        root.addView(progressBar, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 15))
+        root.addView(adContainer)
 
-        // 3. WebView Settings
-        webView.settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            databaseEnabled = true
-            javaScriptCanOpenWindowsAutomatically = true
-            loadWithOverviewMode = true
-            useWideViewPort = true
-        }
+        // 2. WebView Settings (بہتر کنفگریشن)
+        webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.databaseEnabled = true
+        webView.settings.javaScriptCanOpenWindowsAutomatically = true
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                progressBar.visibility = android.view.View.VISIBLE
-            }
-            override fun onPageFinished(view: WebView?, url: String?) {
-                progressBar.visibility = android.view.View.GONE
-                swipeRefresh.isRefreshing = false
-            }
-            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
-                swipeRefresh.isRefreshing = false
-            }
-        }
-        
-        webView.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                progressBar.progress = newProgress
-            }
-        }
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                progressBar.visibility = android.view.View.VISIBLE
+            }
+            override fun onPageFinished(view: WebView?, url: String?) {
+                progressBar.visibility = android.view.View.GONE
+                swipeRefresh.isRefreshing = false
+            }
+            // ایرر ہینڈلنگ تاکہ کریش نہ ہو
+            override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
+                swipeRefresh.isRefreshing = false
+            }
+        }
+        
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                progressBar.progress = newProgress
+            }
+        }
 
-        // 4. Load your website
-        webView.loadUrl(websiteUrl)
+        // Load Content
+        if (Config.LOAD_URL_MODE) {
+            webView.loadUrl(Config.WEBSITE_URL)
+        } else {
+            webView.loadUrl("file:///android_asset/${Config.LOCAL_FILE_NAME}")
+        }
 
-        swipeRefresh.setOnRefreshListener { webView.reload() }
-    }
+        swipeRefresh.setOnRefreshListener { webView.reload() }
 
-    // Handle back button so the app goes back in web history
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
-    }
+        // Ads - اب یہ محفوظ طریقے سے لوڈ ہوں گے
+        try {
+            Admob.loadBanner(this, adContainer)
+            Admob.loadInterstitial(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            // انٹرسٹیشل ایڈ دکھانے سے پہلے چیک کرنا بہتر ہے
+            try {
+                Admob.showInterstitial(this)
+            } catch (e: Exception) {
+                super.onBackPressed()
+            }
+            super.onBackPressed()
+        }
+    }
 }
